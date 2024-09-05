@@ -3,6 +3,10 @@
 #include <stdio.h>
 #include <stdbool.h>
 
+int max(int a, int b) {
+	return a > b ? a : b;
+}
+
 btree_t *create_node(void *item) {
 	btree_t *node = NULL;
 
@@ -60,13 +64,31 @@ void btree_insert_data(btree_t **root, void *item, int (*cmpf)(void *, void *)) 
 }
 
 void *btree_search_item(btree_t *root, void *data_ref, int (*cmpf)(void *, void *)) {
-	if (root->left)
-		btree_search_item(root->left, data_ref, cmpf);
-	printf("%d\n", *(int*)root->item);
-	if (*(int*)data_ref == *(int*)root->item)
-		printf("FOUND!\n");
-	if (root->right)
-		btree_search_item(root->right, data_ref, cmpf);
-	return NULL;
+	if (!root)
+		return NULL;
+	void *result = btree_search_item(root->left, data_ref, cmpf);
+	if (result)
+		return result;
+	if (cmpf(root->item, data_ref) == 0)
+		return root->item;
+	return btree_search_item(root->right, data_ref, cmpf);
 }
 
+int btree_level_height(btree_t *root) {
+	if (!root)
+		return 0;
+	return 1 + max(btree_level_height(root->left), btree_level_height(root->right));
+}
+
+int btree_level_count(btree_t *root) {
+	int lh = 0, rh = 0;
+	int ld = 0, rd = 0;
+
+	if (!root)
+		return 0;
+	lh = btree_level_height(root->left);
+	rh = btree_level_height(root->right);
+	ld = btree_level_count(root->left);
+	rd = btree_level_count(root->right);
+	return max(lh + rh, max(ld, rd));
+}

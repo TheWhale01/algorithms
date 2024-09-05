@@ -49,7 +49,9 @@ int main(void) {
 	btree_apply_infix(tree2, print_node);
 	printf("suffix:\n");
 	btree_apply_suffix(tree2, print_node);
-	// printf("finding\n");
-	// print_node(btree_search_item(tree2, &data4, cmpf));
+	printf("finding\n");
+	print_node(btree_search_item(tree2, &data4, cmpf));
+	printf("Longest branch\n");
+	printf("%d\n", btree_level_count(tree2));
 	return EXIT_SUCCESS;
 }
